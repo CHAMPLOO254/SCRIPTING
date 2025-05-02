@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Time & Background</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 1s ease, color 0.5s ease;
+        }
+
+        .time-container {
+            font-size: 5rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .date-container {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .toggle-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+
+        .toggle-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        /* Light mode styles */
+        .light {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .light .toggle-btn {
+            background-color: #333;
+            color: #f5f5f5;
+        }
+
+        /* Dark mode styles */
+        .dark {
+            background-color: #222;
+            color: #f5f5f5;
+        }
+
+        .dark .toggle-btn {
+            background-color: #f5f5f5;
+            color: #222;
+        }
+
+        /* Time-based background colors */
+        .morning {
+            background-color: #87CEEB; /* Sky blue */
+        }
+
+        .afternoon {
+            background-color: #FFD700; /* Gold */
+        }
+
+        .evening {
+            background-color: #FFA07A; /* Light salmon */
+        }
+
+        .night {
+            background-color: #191970; /* Midnight blue */
+            color: white;
+        }
+    </style>
+</head>
+<body class="light">
+    <div class="toggle-container">
+        <button class="toggle-btn" onclick="toggleDarkMode()">Dark Mode</button>
+    </div>
+    
+    <div class="time-container" id="time"></div>
+    <div class="date-container" id="date"></div>
+
+    <script>
+        // Update time every second
+        function updateTime() {
+            const now = new Date();
+            const timeElement = document.getElementById('time');
+            const dateElement = document.getElementById('date');
+            
+            // Format time (HH:MM:SS)
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Format date (Weekday, Month Day, Year)
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateElement.textContent = now.toLocaleDateString('en-US', options);
+            
+            // Update background based on time of day
+            updateBackground(now.getHours());
+            
+            setTimeout(updateTime, 1000);
+        }
+
+        // Change background based on time of day
+        function updateBackground(hour) {
+            const body = document.body;
+            
+            // Remove all time-based classes
+            body.classList.remove('morning', 'afternoon', 'evening', 'night');
+            
+            // Add appropriate class based on time
+            if (hour >= 5 && hour < 12) {
+                body.classList.add('morning');
+            } else if (hour >= 12 && hour < 17) {
+                body.classList.add('afternoon');
+            } else if (hour >= 17 && hour < 20) {
+                body.classList.add('evening');
+            } else {
+                body.classList.add('night');
+            }
+        }
+
+        // Toggle between light and dark mode
+        function toggleDarkMode() {
+            const body = document.body;
+            const btn = document.querySelector('.toggle-btn');
+            
+            if (body.classList.contains('light')) {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                btn.textContent = 'Light Mode';
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                btn.textContent = 'Dark Mode';
+            }
+        }
+
+        // Initialize
+        window.onload = function() {
+            updateTime();
+        };
+    </script>
+</body>
+</html>
